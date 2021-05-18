@@ -49,7 +49,7 @@ func defend():
 
 
 func animate_attack():
-	yield(get_tree().create_timer(1.0), "timeout")
+	yield(get_tree().create_timer(1.0), "timeout") # Attack animation here?
 	emit_signal("end_turn")
 
 

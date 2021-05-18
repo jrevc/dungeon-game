@@ -2,11 +2,13 @@ extends Node2D
 
 
 signal report_turn
+signal complete_turn
 
 # Character variables
 var active_character
 var active_mob
 export (PackedScene) var Slime
+var current_mob_level
 var enemies = []
 var enemy_slots = [ Vector2(120, 140), Vector2(180, 140), Vector2(240, 140), Vector2(120, 200), Vector2(180, 200), Vector2(240, 200) ]
 
@@ -49,6 +51,8 @@ func spawn_monster(count, monster):
 		add_child(mob)
 		enemies.append(mob)
 		mob.position = position
+		if i == 0:
+			current_mob_level = mob.level
 
 
 func populate_queue():
@@ -69,8 +73,32 @@ func _on_Attack():
 func resolve_player_attack(attack_results):
 	yield(self, "report_turn")
 	$UI.log_message(active_character.name + " attacks (" + str(attack_results["Total"]) + ")!")
-	print("Attack roll: " + str(attack_results))	
-	pass
+	print("Attack roll: " + str(attack_results))
+	var mobs_to_kill = attack_results["Total"] / current_mob_level
+	
+	# If overkill, adjust number
+	if mobs_to_kill > enemies.size():
+		mobs_to_kill = enemies.size()
+		
+	kill_mobs(mobs_to_kill)
+
+
+func kill_mobs(mobs_to_kill):
+	for i in range(mobs_to_kill - 1, -1, -1):
+		var dead_mob = enemies[i]
+		enemies.remove(i)
+		dead_mob.take_damage()
+		turn_order.erase(dead_mob)
+	yield(get_tree().create_timer(0.5), "timeout") # Dying animation here?
+	
+	# Report mobs killed
+	if mobs_to_kill <= 0:
+		$UI.log_message("No monsters killed!")
+	if mobs_to_kill > 1:
+		$UI.log_message(str(mobs_to_kill) + " monsters killed!")
+	else:
+		$UI.log_message(str(mobs_to_kill) + " monster killed!")
+	emit_signal("complete_turn")
 
 
 func _on_Defend():
@@ -83,11 +111,8 @@ func resolve_player_defend(defend_results, attacker):
 	yield(self, "report_turn")
 	$UI.log_message("Attacked by " + attacker.name + "! " + active_character.name + " defends (" + str(defend_results["Active"]) + ")!")
 	print("Defense roll: " + str(defend_results))
-	pass
-
-
-func end_turn():
-	emit_signal("end_turn")
+	yield(get_tree().create_timer(0.5), "timeout") # Defense animation here?
+	emit_signal("complete_turn")
 
 
 func next_turn(turn_index):
@@ -109,6 +134,7 @@ func next_turn(turn_index):
 	
 	# Signal the end of this turn and report the outcome
 	emit_signal("report_turn")
+	yield(self, "complete_turn")
 	
 	# Start a new turn
 	var next_index = (turn_index + 1) % turn_order.size()
