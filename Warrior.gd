@@ -18,6 +18,7 @@ func _ready():
 	max_hp = 6 + level
 	current_hp = max_hp
 	damage_type = "crushing"
+	update_life_display()
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -29,6 +30,7 @@ func _input(_event):
 	if Input.is_action_just_pressed("ui_select"):
 		attack()
 
+# ATTACKING
 
 func attack():
 	var roll = randi() % 6 + 1
@@ -39,6 +41,13 @@ func attack():
 	return attack_roll
 
 
+func animate_attack():
+	yield(get_tree().create_timer(1.0), "timeout") # Attack animation here?
+	emit_signal("end_turn")
+
+
+# DEFENDING
+
 func defend():
 	var roll = randi() % 6 + 1
 	var passive_defense = roll + armor_bonus
@@ -48,11 +57,20 @@ func defend():
 	return defense_roll
 
 
-func animate_attack():
-	yield(get_tree().create_timer(1.0), "timeout") # Attack animation here?
-	emit_signal("end_turn")
-
-
 func animate_defense():
 	yield(get_tree().create_timer(1.0), "timeout")
 	emit_signal("end_turn")
+
+# TAKING DAMAGE
+
+func update_life_display():
+	$Life.text = str(current_hp) + " / " + str(max_hp)
+
+
+func take_damage(damage = 1):
+	current_hp -= damage
+	update_life_display()
+
+
+func die():
+	queue_free()

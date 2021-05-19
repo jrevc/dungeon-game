@@ -3,7 +3,7 @@ extends Node2D
 
 signal end_turn
 
-var level = 3
+export var level = 3
 var actor_type = "mob"
 
 
@@ -17,5 +17,5 @@ func _ready():
 #	pass
 
 
-func take_damage():
+func die():
 	queue_free()

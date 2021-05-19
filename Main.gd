@@ -64,6 +64,8 @@ func populate_queue():
 	pass
 
 
+# ATTACK RESOLUTION
+
 func _on_Attack():
 	$UI/BtnAttack.disabled = true
 	var attack_results = active_character.attack()
@@ -87,7 +89,7 @@ func kill_mobs(mobs_to_kill):
 	for i in range(mobs_to_kill - 1, -1, -1):
 		var dead_mob = enemies[i]
 		enemies.remove(i)
-		dead_mob.take_damage()
+		dead_mob.die()
 		turn_order.erase(dead_mob)
 	yield(get_tree().create_timer(0.5), "timeout") # Dying animation here?
 	
@@ -101,6 +103,8 @@ func kill_mobs(mobs_to_kill):
 	emit_signal("complete_turn")
 
 
+# DEFENSE RESOLUTION
+
 func _on_Defend():
 	$UI/BtnDefend.disabled = true
 	var defend_results = active_character.defend()
@@ -112,8 +116,15 @@ func resolve_player_defend(defend_results, attacker):
 	$UI.log_message("Attacked by " + attacker.name + "! " + active_character.name + " defends (" + str(defend_results["Active"]) + ")!")
 	print("Defense roll: " + str(defend_results))
 	yield(get_tree().create_timer(0.5), "timeout") # Defense animation here?
+	if defend_results["Active"] > current_mob_level:
+		$UI.log_message(active_character.name + " defends successfully!")
+	else:
+		$UI.log_message(active_character.name + " takes damage!")
+		active_character.take_damage()
 	emit_signal("complete_turn")
 
+
+# TURN MANAGEMENT
 
 func next_turn(turn_index):
 	print("--- NEW TURN ---")
