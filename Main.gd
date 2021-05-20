@@ -10,7 +10,14 @@ var active_mob
 export (PackedScene) var Slime
 var current_mob_level
 var enemies = []
-var enemy_slots = [ Vector2(120, 140), Vector2(180, 140), Vector2(240, 140), Vector2(120, 200), Vector2(180, 200), Vector2(240, 200) ]
+var enemy_slots = [
+	Vector2(120, 80),
+	Vector2(180, 80),
+	Vector2(240, 80),
+	Vector2(120, 140),
+	Vector2(180, 140),
+	Vector2(240, 140)
+	]
 
 # Turn-based combat variables
 export var turn_order = []
