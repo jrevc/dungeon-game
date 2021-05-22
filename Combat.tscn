@@ -1,0 +1,86 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://Rat.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Warrior.tscn" type="PackedScene" id=2]
+[ext_resource path="res://UI.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Combat.gd" type="Script" id=4]
+[ext_resource path="res://Cleric.tscn" type="PackedScene" id=5]
+[ext_resource path="res://CombatCamera.gd" type="Script" id=6]
+
+[node name="Combat" type="Node2D"]
+script = ExtResource( 4 )
+chosen_mob = ExtResource( 1 )
+character_1 = ExtResource( 2 )
+character_2 = ExtResource( 5 )
+
+[node name="CombatCamera" type="Camera2D" parent="."]
+position = Vector2( 180, 320 )
+current = true
+script = ExtResource( 6 )
+
+[node name="UI" parent="." instance=ExtResource( 3 )]
+
+[node name="MobSpawnPoints" type="Node2D" parent="."]
+position = Vector2( 270, 160 )
+
+[node name="Spawn1" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( -19.8756, 26.4028 )
+
+[node name="Spawn2" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( 19.403, 25.0007 )
+
+[node name="Spawn3" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( -36.7107, -0.530594 )
+
+[node name="Spawn4" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( 35.6768, -0.530594 )
+
+[node name="Spawn5" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( -17.3529, -24.0985 )
+
+[node name="Spawn6" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( 14.9189, -26.06 )
+
+[node name="Spawn7" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( -0.217285, 54.6661 )
+
+[node name="Spawn8" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( 40.9866, 50.4616 )
+
+[node name="Spawn9" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( -40.5803, 52.1434 )
+
+[node name="Spawn10" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( 64.5317, 27.7574 )
+
+[node name="Spawn11" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( -63.2845, 24.3938 )
+
+[node name="Spawn12" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( -77.5798, -0.833054 )
+
+[node name="Spawn13" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( 79.6678, -0.833054 )
+
+[node name="Spawn14" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( -59.921, -28.5827 )
+
+[node name="Spawn15" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( 57.8046, -29.4236 )
+
+[node name="Spawn16" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( -2.73999, -57.1731 )
+
+[node name="Spawn17" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( -33.0123, -45.4006 )
+
+[node name="Spawn18" type="Node2D" parent="MobSpawnPoints"]
+position = Vector2( 30.0549, -46.2415 )
+
+[node name="CharacterSpawnPoints" type="Node2D" parent="."]
+position = Vector2( 180, 320 )
+
+[node name="CharacterSpawn1" type="Node2D" parent="CharacterSpawnPoints"]
+
+[node name="CharacterSpawn2" type="Node2D" parent="CharacterSpawnPoints"]
+position = Vector2( 180, 0 )

@@ -9,17 +9,13 @@ var rng = RandomNumberGenerator.new()
 # Character variables
 var active_character
 var active_mob
-export (PackedScene) var Slime
+export (PackedScene) var chosen_mob
+export (PackedScene) var character_1
+export (PackedScene) var character_2
 var current_mob_level
+var characters = []
 var enemies = []
-var enemy_slots = [
-	Vector2(200, 80),
-	Vector2(260, 80),
-	Vector2(340, 80),
-	Vector2(220, 140),
-	Vector2(260, 140),
-	Vector2(340, 140)
-	]
+var enemy_positions = []
 
 # Turn-based combat variables
 export var turn_order = []
@@ -28,6 +24,8 @@ export var turn_order = []
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	rng.randomize()
+	enemy_positions = $MobSpawnPoints.get_children()
+	enemy_positions.shuffle()
 	
 	# Listeners
 	$UI/BtnAttack.connect("pressed", self, "_on_Attack")
@@ -43,10 +41,27 @@ func _ready():
 
 
 func start_combat():
-	var monster_count = rng.randi_range(3, 6)
-	yield(spawn_monster(monster_count, Slime), "completed")
+	yield(spawn_characters(), "completed")
+	var monster_count = 0
+	var spawn_dice = 3
+	for i in spawn_dice:
+		monster_count += rng.randi_range(1, 6)
+	yield(spawn_monster(monster_count, chosen_mob), "completed")
 	yield(populate_queue(), "completed")
 	next_turn(0)
+
+
+func spawn_characters():
+	yield(get_tree(), "idle_frame")
+	for i in 2:
+		var character_to_spawn
+		if i == 0:
+			character_to_spawn = character_1
+		else:
+			character_to_spawn = character_2
+		var new_character = character_to_spawn.instance()
+		new_character.position = $CharacterSpawnPoints.get_child(i).global_position
+		add_child(new_character)
 
 
 func spawn_monster(count, monster):
@@ -54,15 +69,26 @@ func spawn_monster(count, monster):
 	for i in range(count):
 		var mob = monster.instance()
 		mob.name += str(i + 1)
-		var randomPosIndex = randi() % enemy_slots.size()
-		print("Monster position index: " + str(randomPosIndex))
-		var position = enemy_slots[randomPosIndex]
-		enemy_slots.remove(randomPosIndex)
+#		var spawn_point = $SpawnPoints.get_child(i)
+		var position = enemy_positions[i].global_position
 		add_child(mob)
 		enemies.append(mob)
 		mob.position = position
+		mob.scale.x = rng.randi_range(0, 1) * 2 - 1
 		if i == 0:
 			current_mob_level = mob.level
+		arrange_monsters()
+
+
+func arrange_monsters():
+	enemies.sort_custom(self, "sort_enemies")
+	for mob in enemies:
+#		print("Moving " + mob.name + " up!")
+		mob.raise()
+
+
+static func sort_enemies(a, b):
+	return a.position.y < b.position.y
 
 
 func populate_queue():
@@ -157,7 +183,7 @@ func next_turn(turn_index):
 	print("Waiting for player action...")
 	
 	# Move camera
-	$CombatCamera.targetPosition = active_character.position + Vector2(0, 20)
+	$CombatCamera.targetPosition = active_character.position + Vector2(0, 10)
 	
 	# Wait for active character to finish their presentation/animation
 	yield(active_character, "end_turn")
