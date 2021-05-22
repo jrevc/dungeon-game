@@ -73,7 +73,7 @@ func spawn_monster(count, monster):
 		var position = enemy_positions[i].global_position
 		add_child(mob)
 		enemies.append(mob)
-		mob.position = position
+		mob.position = position + Vector2(rng.randi_range(-4, 4), rng.randi_range(-4, 4))
 		mob.scale.x = rng.randi_range(0, 1) * 2 - 1
 		if i == 0:
 			current_mob_level = mob.level
@@ -110,9 +110,15 @@ func _on_Attack():
 
 func resolve_player_attack(attack_results):
 	yield(self, "report_turn")
-	$UI.log_message(active_character.name + " attacks (" + str(attack_results["Total"]) + ")!")
 	print("Attack roll: " + str(attack_results))
 	var mobs_to_kill = floor(attack_results["Total"] / current_mob_level)
+	
+	# If rolled a 1, automatically miss
+	if attack_results["Roll"] <= 1:
+		mobs_to_kill = 0
+		$UI.log_message(active_character.name + " fumbles and misses!")
+	else:
+		$UI.log_message(active_character.name + " attacks (" + str(attack_results["Total"]) + ")!")
 	
 	# If overkill, adjust number
 	if mobs_to_kill > enemies.size():
@@ -152,7 +158,10 @@ func resolve_player_defend(defend_results, attacker):
 	$UI.log_message("Attacked by " + attacker.name + "! " + active_character.name + " defends (" + str(defend_results["Active"]) + ")!")
 	print("Defense roll: " + str(defend_results))
 	yield(get_tree().create_timer(0.5), "timeout") # Defense animation here?
-	if defend_results["Active"] > current_mob_level:
+	if defend_results["Roll"] <= 1:
+		$UI.log_message(active_character.name + " fumbles and takes damage!")
+		active_character.take_damage()
+	elif defend_results["Active"] > current_mob_level:
 		$UI.log_message(active_character.name + " defends successfully!")
 	else:
 		$UI.log_message(active_character.name + " takes damage!")
