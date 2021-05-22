@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://ui/Life.tscn" type="PackedScene" id=1]
+[ext_resource path="res://art/cleric.png" type="Texture" id=2]
+[ext_resource path="res://Cleric.gd" type="Script" id=3]
+
+[node name="Cleric" type="Sprite" groups=[
+"characters",
+]]
+texture = ExtResource( 2 )
+script = ExtResource( 3 )
+
+[node name="Life" parent="." instance=ExtResource( 1 )]
+margin_left = -108.0
+margin_top = -55.7295
+margin_right = -68.0
+margin_bottom = -41.7295

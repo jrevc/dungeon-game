@@ -15,9 +15,9 @@ var actor_type = "character"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	max_hp = 6 + level
+	max_hp = 4 + level
 	current_hp = max_hp
-	damage_type = "slashing"
+	damage_type = "crushing"
 	update_life_display()
 
 
@@ -34,7 +34,7 @@ func _input(_event):
 
 func attack():
 	var roll = randi() % 6 + 1
-	var level_bonus = level
+	var level_bonus = floor(level / 2)
 	var total = roll + level_bonus
 	var attack_roll = { "Total": total, "Roll": roll, "LevelBonus": level_bonus, "Type": damage_type }
 	animate_attack()

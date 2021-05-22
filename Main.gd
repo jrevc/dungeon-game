@@ -83,7 +83,7 @@ func resolve_player_attack(attack_results):
 	yield(self, "report_turn")
 	$UI.log_message(active_character.name + " attacks (" + str(attack_results["Total"]) + ")!")
 	print("Attack roll: " + str(attack_results))
-	var mobs_to_kill = attack_results["Total"] / current_mob_level
+	var mobs_to_kill = floor(attack_results["Total"] / current_mob_level)
 	
 	# If overkill, adjust number
 	if mobs_to_kill > enemies.size():
@@ -137,6 +137,10 @@ func next_turn(turn_index):
 	print("--- NEW TURN ---")
 	var current_actor = turn_order[turn_index]
 	
+	# Move camera
+	if current_actor.actor_type == "character":
+		$CombatCamera.targetPosition = current_actor.position + Vector2(0, 20)
+	
 	# Change state of game depending on active character
 	if current_actor.actor_type == "character":
 		$UI/BtnAttack.disabled = false
@@ -157,4 +161,5 @@ func next_turn(turn_index):
 	# Start a new turn
 	var next_index = (turn_index + 1) % turn_order.size()
 	print("Moving to next actor (" + str(next_index) + ")...")
+	
 	next_turn(next_index)

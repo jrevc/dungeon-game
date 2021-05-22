@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://art/warrior.png" type="Texture" id=1]
 [ext_resource path="res://Warrior.gd" type="Script" id=2]
+[ext_resource path="res://ui/Life.tscn" type="PackedScene" id=3]
 
 [node name="Warrior" type="Sprite" groups=[
 "characters",
@@ -10,17 +11,4 @@ position = Vector2( 0, -8.97969 )
 texture = ExtResource( 1 )
 script = ExtResource( 2 )
 
-[node name="Life" type="Label" parent="."]
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-margin_left = -87.0
-margin_top = -69.6448
-margin_right = -47.0
-margin_bottom = -55.6448
-text = "7 / 7"
-align = 1
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="Life" parent="." instance=ExtResource( 3 )]
