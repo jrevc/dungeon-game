@@ -17,5 +17,15 @@ func _ready():
 #	pass
 
 
+func select_target(targets):
+	var min_value = targets[0].attacked_this_turn
+	var selected_target = targets[0]
+	for target in targets:
+		if target.attacked_this_turn < min_value:
+			min_value = target.attacked_this_turn
+			selected_target = target
+	selected_target.attacked_this_turn += 1
+	return selected_target
+
 func die():
 	queue_free()

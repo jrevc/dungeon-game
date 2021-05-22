@@ -5,10 +5,12 @@ signal end_turn
 
 var level = 1
 var damage_type
+var two_hand_bonus = 0
 var armor_bonus = 2
 var shield_bonus = 1
 var max_hp
 var current_hp
+var attacked_this_turn = 0
 var wealth
 var actor_type = "character"
 
@@ -35,7 +37,7 @@ func _input(_event):
 func attack():
 	var roll = randi() % 6 + 1
 	var level_bonus = level
-	var total = roll + level_bonus
+	var total = roll + level_bonus + two_hand_bonus
 	var attack_roll = { "Total": total, "Roll": roll, "LevelBonus": level_bonus, "Type": damage_type }
 	animate_attack()
 	return attack_roll

@@ -4,6 +4,8 @@ extends Node2D
 signal report_turn
 signal complete_turn
 
+var rng = RandomNumberGenerator.new()
+
 # Character variables
 var active_character
 var active_mob
@@ -11,12 +13,12 @@ export (PackedScene) var Slime
 var current_mob_level
 var enemies = []
 var enemy_slots = [
-	Vector2(120, 80),
-	Vector2(180, 80),
-	Vector2(240, 80),
-	Vector2(120, 140),
-	Vector2(180, 140),
-	Vector2(240, 140)
+	Vector2(200, 80),
+	Vector2(260, 80),
+	Vector2(340, 80),
+	Vector2(220, 140),
+	Vector2(260, 140),
+	Vector2(340, 140)
 	]
 
 # Turn-based combat variables
@@ -25,7 +27,7 @@ export var turn_order = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	randomize()
+	rng.randomize()
 	
 	# Listeners
 	$UI/BtnAttack.connect("pressed", self, "_on_Attack")
@@ -41,7 +43,8 @@ func _ready():
 
 
 func start_combat():
-	yield(spawn_monster(3, Slime), "completed")
+	var monster_count = rng.randi_range(3, 6)
+	yield(spawn_monster(monster_count, Slime), "completed")
 	yield(populate_queue(), "completed")
 	next_turn(0)
 
@@ -103,7 +106,7 @@ func kill_mobs(mobs_to_kill):
 	# Report mobs killed
 	if mobs_to_kill <= 0:
 		$UI.log_message("No monsters killed!")
-	if mobs_to_kill > 1:
+	elif mobs_to_kill > 1:
 		$UI.log_message(str(mobs_to_kill) + " monsters killed!")
 	else:
 		$UI.log_message(str(mobs_to_kill) + " monster killed!")
@@ -137,10 +140,6 @@ func next_turn(turn_index):
 	print("--- NEW TURN ---")
 	var current_actor = turn_order[turn_index]
 	
-	# Move camera
-	if current_actor.actor_type == "character":
-		$CombatCamera.targetPosition = current_actor.position + Vector2(0, 20)
-	
 	# Change state of game depending on active character
 	if current_actor.actor_type == "character":
 		$UI/BtnAttack.disabled = false
@@ -149,7 +148,16 @@ func next_turn(turn_index):
 	elif current_actor.actor_type == "mob":
 		$UI/BtnDefend.disabled = false
 		active_mob = current_actor
+		# Build a list of targets
+		var targets = []
+		for actor in turn_order:
+			if actor.actor_type == "character":
+				targets.append(actor)
+		active_character = active_mob.select_target(targets)
 	print("Waiting for player action...")
+	
+	# Move camera
+	$CombatCamera.targetPosition = active_character.position + Vector2(0, 20)
 	
 	# Wait for active character to finish their presentation/animation
 	yield(active_character, "end_turn")
