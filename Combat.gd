@@ -68,7 +68,7 @@ func spawn_monster(count, monster):
 	yield(get_tree(), "idle_frame")
 	for i in range(count):
 		var mob = monster.instance()
-		mob.name += str(i + 1)
+		mob.name += " " + str(i + 1)
 #		var spawn_point = $SpawnPoints.get_child(i)
 		var position = enemy_positions[i].global_position
 		add_child(mob)
@@ -190,6 +190,10 @@ func next_turn(turn_index):
 				targets.append(actor)
 		active_character = active_mob.select_target(targets)
 	print("Waiting for player action...")
+	
+	# Move pointer
+	$Pointer/Container.position = current_actor.position - Vector2(0, current_actor.texture.get_size().y / 2)
+	$Pointer/Container.raise()
 	
 	# Move camera
 	$CombatCamera.targetPosition = active_character.position + Vector2(0, 10)

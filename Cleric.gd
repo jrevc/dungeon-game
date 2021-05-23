@@ -17,6 +17,7 @@ var actor_type = "character"
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	randomize()
 	max_hp = 4 + level
 	current_hp = max_hp
 	damage_type = "crushing"
