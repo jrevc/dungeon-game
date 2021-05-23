@@ -113,18 +113,37 @@ func resolve_player_attack(attack_results):
 	print("Attack roll: " + str(attack_results))
 	var mobs_to_kill = floor(attack_results["Total"] / current_mob_level)
 	
-	# If rolled a 1, automatically miss
 	if attack_results["Roll"] <= 1:
+		# If rolled a 1, automatically miss
 		mobs_to_kill = 0
 		$UI.log_message(active_character.name + " fumbles and misses!")
+	elif attack_results["Roll"] >= 6:
+		# If rolled a 6, keep rolling and adding
+		# until the next roll is not a 6
+		var new_total = exploding_roll(attack_results["Total"])
+		mobs_to_kill = floor(new_total / current_mob_level)
+		var difference = new_total - attack_results["Total"]
+		$UI.log_message(active_character.name + " attacks mightily (" +
+			str(attack_results["Total"]) + " + " + str(difference) + ")!")
 	else:
-		$UI.log_message(active_character.name + " attacks (" + str(attack_results["Total"]) + ")!")
+		$UI.log_message(active_character.name + " attacks (" +
+			str(attack_results["Total"]) + ")!")
 	
 	# If overkill, adjust number
 	if mobs_to_kill > enemies.size():
 		mobs_to_kill = enemies.size()
 		
 	kill_mobs(mobs_to_kill)
+
+
+func exploding_roll(orig_total):
+	var explode = true
+	while explode:
+		var new_roll = rng.randi_range(1, 6)
+		orig_total += new_roll
+		if new_roll < 6:
+			explode = false
+	return orig_total
 
 
 func kill_mobs(mobs_to_kill):
@@ -161,7 +180,7 @@ func resolve_player_defend(defend_results, attacker):
 	if defend_results["Roll"] <= 1:
 		$UI.log_message(active_character.name + " fumbles and takes damage!")
 		active_character.take_damage()
-	elif defend_results["Active"] > current_mob_level:
+	elif defend_results["Roll"] >= 6 || defend_results["Active"] > current_mob_level:
 		$UI.log_message(active_character.name + " defends successfully!")
 	else:
 		$UI.log_message(active_character.name + " takes damage!")
