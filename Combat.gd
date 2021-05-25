@@ -30,14 +30,17 @@ func _ready():
 	# Listeners
 	$UI/BtnAttack.connect("pressed", self, "_on_Attack")
 	$UI/BtnDefend.connect("pressed", self, "_on_Defend")
-	
-	# Start combat!
-	start_combat()
+	$UI/BtnNextBattle.connect("pressed", self, "_on_NextBattle")
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 #func _process(delta):
 #	pass
+
+
+func _on_NextBattle():
+	$UI/BtnNextBattle.hide()
+	start_combat()
 
 
 func start_combat():
@@ -51,6 +54,14 @@ func start_combat():
 	next_turn(0)
 
 
+func end_combat():
+	turn_order.clear()
+	characters[0].queue_free()
+	characters[1].queue_free()
+	characters.clear()
+	$UI/BtnNextBattle.show()
+
+
 func spawn_characters():
 	yield(get_tree(), "idle_frame")
 	for i in 2:
@@ -60,6 +71,7 @@ func spawn_characters():
 		else:
 			character_to_spawn = character_2
 		var new_character = character_to_spawn.instance()
+		characters.append(new_character)
 		new_character.position = $CharacterSpawnPoints.get_child(i).global_position
 		add_child(new_character)
 
@@ -228,4 +240,7 @@ func next_turn(turn_index):
 	var next_index = (turn_index + 1) % turn_order.size()
 	print("Moving to next actor (" + str(next_index) + ")...")
 	
-	next_turn(next_index)
+	if enemies.size() <= 0:
+		end_combat()
+	else:
+		next_turn(next_index)
