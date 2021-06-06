@@ -3,6 +3,7 @@ extends Node2D
 
 signal report_turn
 signal complete_turn
+signal assign_existing_damage
 
 var rng = RandomNumberGenerator.new()
 
@@ -10,8 +11,8 @@ var rng = RandomNumberGenerator.new()
 var active_character
 var active_mob
 export (PackedScene) var chosen_mob
-export (PackedScene) var character_1
-export (PackedScene) var character_2
+var character_1
+var character_2
 var current_mob_level
 var characters = []
 var enemies = []
@@ -46,16 +47,28 @@ func _on_NextBattle():
 func start_combat():
 	yield(spawn_characters(), "completed")
 	var monster_count = 0
-	var spawn_dice = 3
+	var spawn_dice = 1
 	for i in spawn_dice:
 		monster_count += rng.randi_range(1, 6)
 	yield(spawn_monster(monster_count, chosen_mob), "completed")
 	yield(populate_queue(), "completed")
+	for i in 2:
+		characters[i].take_damage(get_parent().damageList[i])
 	next_turn(0)
 
 
 func end_combat():
 	turn_order.clear()
+	
+	# Hide pointer
+	$Pointer/Container.position = Vector2(0, 0)
+	
+	# Update parent node
+	get_parent().update_characters(characters[0].max_hp -
+		characters[0].current_hp, characters[1].max_hp -
+		characters[1].current_hp)
+	
+	# Forget about characters in combat
 	characters[0].queue_free()
 	characters[1].queue_free()
 	characters.clear()

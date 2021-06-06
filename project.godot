@@ -11,7 +11,7 @@ config_version=4
 [application]
 
 config/name="Dungeon"
-run/main_scene="res://Combat.tscn"
+run/main_scene="res://Dungeon.tscn"
 config/icon="res://icon.png"
 
 [display]

@@ -27,4 +27,4 @@ anims/anim_point = SubResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="Container"]
 texture = ExtResource( 1 )
-offset = Vector2( 0, -32 )
+offset = Vector2( 0, -24 )
