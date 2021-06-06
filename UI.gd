@@ -26,3 +26,11 @@ func log_message(message):
 	$Log3.text = $Log2.text
 	$Log2.text = $Log1.text
 	$Log1.text = message
+
+
+func display_status(message):
+	$StatusText.bbcode_text = "[center][color=red]" + message
+
+
+func clear_status():
+	$StatusText.bbcode_text = ""

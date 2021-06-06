@@ -32,6 +32,9 @@ func _ready():
 	$UI/BtnAttack.connect("pressed", self, "_on_Attack")
 	$UI/BtnDefend.connect("pressed", self, "_on_Defend")
 	$UI/BtnNextBattle.connect("pressed", self, "_on_NextBattle")
+	
+	# Display status message
+	$UI.display_status("ENEMIES\nAPPROACHING!")
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -45,6 +48,7 @@ func _on_NextBattle():
 
 
 func start_combat():
+	$UI.clear_status()
 	yield(spawn_characters(), "completed")
 	var monster_count = 0
 	var spawn_dice = 1
@@ -58,6 +62,7 @@ func start_combat():
 
 
 func end_combat():
+	$UI.display_status("YOU WIN!")
 	turn_order.clear()
 	
 	# Hide pointer
